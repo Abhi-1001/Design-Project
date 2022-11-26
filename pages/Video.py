@@ -1,56 +1,46 @@
 # importing relevant python packages
 import streamlit as st
-import pandas as pd
+st.set_page_config(initial_sidebar_state="auto")
 import moviepy.editor
-import pickle
-import cv2
+import shutil
 import os
+
 # preprocessing
-import re
-import nltk
-import string
-from io import StringIO
 from pydub import AudioSegment
 import speech_recognition as sr
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+from src.utils import check_hate_speech
+from src.utils import write_bytesio_to_file
 from pydub.silence import split_on_silence
-from sklearn.feature_extraction.text import CountVectorizer
-# modeling
-from sklearn import svm
-# sentiment analysis
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # creating page sections
 video_input = st.container()
 model_results = st.container()
-sentiment_analysis = st.container()
+
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # initialize the recognizer
 speech_to_text_convertor = sr.Recognizer()
 
-# func to save BytesIO on a drive
-def write_bytesio_to_file(filename, bytesio):
-    """
-    Write the contents of the given BytesIO to a file.
-    Creates the file or overwrites the file if it does
-    not exist yet. 
-    """
-    with open(filename, "wb") as outfile:
-        # Copy the BytesIO stream to the output file
-        outfile.write(bytesio.getbuffer())
-
 with video_input:
+    st.header('Is Your Video Considered Hate Speech?')
+    st.write("""*Please note that this prediction is based on how the model was trained, so it may not be an accurate representation.*""")
     # user input here
     uploaded_file = st.file_uploader("Choose a file", type=['mp4'])
     
     if uploaded_file is not None:
         # save uploaded video to disc
-        with st.spinner("Please wait......."):
-            temp_file_to_save = 'temp_file_1.mp4'
+        with st.spinner("Please wait....... Extracting audio........"):
+            temp_file_to_save = 'temp_video_file.mp4'
             write_bytesio_to_file(temp_file_to_save, uploaded_file)
 
-            video = moviepy.editor.VideoFileClip("temp_file_1.mp4")
+            video = moviepy.editor.VideoFileClip("temp_video_file.mp4")
 
             audio = video.audio
 
@@ -90,7 +80,20 @@ with video_input:
                         print(chunk_file, ":", text)
                         whole_text += text
 
-            st.write("Converted Speech to Text")
+            st.write("Converted Audio to Text")
             st.write(whole_text)
-
             
+            # remove the media files
+            os.remove('/home/abhi1001/personal_projects/Design-Project/temp_audio_file.wav')
+            os.remove('/home/abhi1001/personal_projects/Design-Project/temp_video_file.mp4')
+            shutil.rmtree('/home/abhi1001/personal_projects/Design-Project/audio_chunks')
+
+with model_results:
+    if st.button('Check for Hate Speech'):
+        with st.spinner("Please wait......."):
+            prediction = check_hate_speech(whole_text)
+            
+            prediction = 'Prediction: ' + prediction
+
+            st.subheader(prediction)
+            st.text('')

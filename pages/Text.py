@@ -1,16 +1,11 @@
 # importing relevant python packages
 import streamlit as st
+st.set_page_config(initial_sidebar_state="auto")
 import pandas as pd
-import numpy as np
-import pickle
+
 # preprocessing
-import re
-import nltk
-import string
-from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import CountVectorizer
-# modeling
-from sklearn import svm
+from src.utils import check_hate_speech
+
 # sentiment analysis
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
@@ -18,54 +13,32 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 text_input = st.container()
 model_results = st.container()
 sentiment_analysis = st.container()
-stopword = set(stopwords.words('english'))
-stemmer = nltk.SnowballStemmer("english")
 
-def clean(text):
-    text = str (text). lower()
-    text = re.sub('[.?]', '', text)
-    text = re.sub('https?://\S+|www.\S+', '', text)
-    text = re.sub('<.?>+', '', text)
-    text = re.sub('[%s]' % re.escape(string.punctuation), '', text)
-    text = re.sub('\n', '', text)
-    text = re.sub('\w\d\w', '', text)
-    text = [word for word in text.split(' ') if word not in stopword]
-    text= " ".join(text)
-    text = [stemmer.stem(word) for word in text.split(' ')]
-    text= " ".join(text)
-    return text
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 with text_input:
-    st.header('Is Your Tweet Considered Hate Speech?')
+    st.header('Is Your Text Considered Hate Speech?')
     st.write("""*Please note that this prediction is based on how the model was trained, so it may not be an accurate representation.*""")
     # user input here
-    user_text = st.text_input('Enter Tweet', max_chars=280) # setting input as user_text
+    user_text = st.text_area('Enter Tweet', max_chars=280) # setting input as user_text
+
+    st.button('Check for Hate Speech')
 
 with model_results:
     # processing user_text
     if user_text:
         with st.spinner("Please wait......."):
-            data = pd.read_csv("/home/abhi1001/personal_projects/Design-Project/src/twitter.csv")
-            data["labels"] = data["class"]. map({0: "Hate Speech", 1: "Offensive Speech", 2: "No Hate and Offensive Speech"})
-            data = data[["tweet", "labels"]]
-
-            data["tweet"] = data["tweet"].apply(clean)
-            x = np.array(data["tweet"])
-            cv = CountVectorizer()
-            cv.fit_transform(x)
-
-            with open('/home/abhi1001/personal_projects/Design-Project/pickle/final_model.pkl', 'rb') as file:
-                model = pickle.load(file)
-
-            # Predicting the outcome
-            input = cv.transform([user_text]).toarray()
-            prediction = model.predict(input)
-
-            prediction = ' '.join(prediction).capitalize()
-            print(prediction)
-
-            prediction = 'Prediction: ' + prediction
+            prediction = check_hate_speech(user_text)
             
+            prediction = 'Prediction: ' + prediction
+
             st.subheader(prediction)
             st.text('')
 

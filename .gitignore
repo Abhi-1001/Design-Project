@@ -128,3 +128,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+temp_video_file.mp4
+trial_audio_file.mp3
+temp_audio_file.wav
+craft_mlt_25k.pth
+english_g2.pth
+audio_chunks/

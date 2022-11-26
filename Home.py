@@ -1,5 +1,7 @@
 # importing relevant python packages
 import streamlit as st
+st.set_page_config(initial_sidebar_state="auto", layout="wide")
+
 from PIL import Image
 
 # creating page sections
@@ -9,14 +11,19 @@ data_desc = st.container()
 performance = st.container()
 contact = st.container()
 
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 with site_header:
     st.title('Hate Speech Detection')
     st.write("""
-    This project aims to **automate content moderation** to identify hate speech using **machine learning binary classification algorithms.** 
-    
-    Baseline models included Random Forest, Naive Bayes, Logistic Regression and Support Vector Machine (SVM). The final model was a **Logistic Regression** model that used Count Vectorization for feature engineering. It produced an F1 of 0.3958 and Recall (TPR) of 0.624.  
-        
-    Check out the project repository [here](https://github.com/sidneykung/twitter_hate_speech_detection).
+    This project aims to **automate content moderation** to identify hate speech using **machine learning algorithms.**
     """)
 
 with business_context:
@@ -40,34 +47,3 @@ with data_desc:
         """)
     with venn:
         st.image(Image.open('visualizations/word_venn.png'), width = 400)
-
-with performance:
-    description, conf_matrix = st.columns(2)
-    with description:
-        st.header('Final Model Performance')
-        st.write("""
-        These scores are indicative of the two major roadblocks of the project:
-        - The massive class imbalance of the dataset
-        - The model's inability to identify what constitutes as hate speech
-        """)
-    with conf_matrix:
-        st.image(Image.open('visualizations/normalized_log_reg_countvec_matrix.png'), width = 400)
-
-with contact:
-    st.markdown("---")
-    st.header('For More Information')
-    st.text('')
-    st.write("""
-
-    **Check out the project repository [here](https://github.com/sidneykung/twitter_hate_speech_detection).**
-
-    Contact Sidney Kung via [sidneyjkung@gmail.com](mailto:sidneyjkung@gmail.com).
-    """)
-
-    st.subheader("Let's Connect!")
-    st.write("""
-    
-    [LinkedIn](https://www.linkedin.com/in/sidneykung/) | [Github](https://github.com/sidneykung)  |  [Medium](https://medium.com/@sidneykung)  |  [Twitter](https://twitter.com/sidney_k98)
-
-
-    """)
