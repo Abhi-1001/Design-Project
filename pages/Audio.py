@@ -9,7 +9,6 @@ import re
 import nltk
 import string
 from io import StringIO
-from pydub import AudioSegment
 import speech_recognition as sr
 import utils
 
@@ -20,10 +19,18 @@ model_results = st.container()
 # sentiment_analysis = st.container()
 
 with audio_input:
-    st.write("Audio Recorder")
+    st.write("Audio File uploader")
     user_audio_file = st.file_uploader("upload audio file", type = [".wav", ".mp3"])
     if user_audio_file:
         user_text = utils.get_text_from_audio(user_audio_file)   
+        st.info(user_text)
+    else:
+        user_text = None
+
+with audio_recorder:
+    st.write("Audio Recorder")
+    user_text = utils.record_audio()
+    if user_text:
         st.info(user_text)
     else:
         user_text = None

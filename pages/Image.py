@@ -1,14 +1,6 @@
 # importing relevant python packages
 import streamlit as st
-import pandas as pd
-import pickle
-import cv2
-import os
-# preprocessing
-import re
-import nltk
-import string
-from io import StringIO
+
 from pydub import AudioSegment
 import speech_recognition as sr
 import utils

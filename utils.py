@@ -5,6 +5,7 @@ import io
 import pickle
 import re
 import string
+import wave
 
 import numpy as np
 import soundfile as sf
@@ -18,9 +19,16 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
 import subprocess
 import shutil
+import librosa
+import soundfile as sf
+from googleapiclient import discovery
+import json
 
-from hatesonar import Sonar
-sonar_model = Sonar()
+API_KEY = 'AIzaSyA4KlnJP1r-u7USC3ITpsOEgHWFOfP_6tg'
+
+
+# from hatesonar import Sonar
+# sonar_model = Sonar()
 
 
 nltk.download('punkt')
@@ -44,12 +52,15 @@ def write_bytesio_to_file(filename, bytesio):
 
 
 def convert_mp3_to_wav(inp_file, op_file):
-    sound = AudioSegment.from_mp3(inp_file)
+    try:
+        sound = AudioSegment.from_file(inp_file.name, format = "mp3")
+    except:
+        sound = Audiosegment.from_file(inp_file.name, format="mp4")
     sound.export(op_file, format="wav")
     return open(op_file)
 
 
-def get_text_from_audio(file_uploaded):
+def get_text_from_audio(file_uploaded, already_exist = False):
     # if file_uploaded
     print("this:",file_uploaded.name)
     input_file = file_uploaded
@@ -57,15 +68,20 @@ def get_text_from_audio(file_uploaded):
     if pathlib.Path(file_uploaded.name).suffix == ".mp3":
         # input_file = convert_mp3_to_wav(file_uploaded)
 
-        tmp_mp3_file = "generated_files/tmp_mp3_file.mp3"
-        with open(tmp_mp3_file, "w+b") as f:
-            f.write(file_uploaded.getbuffer())
-
-        input_file = convert_mp3_to_wav(tmp_mp3_file, tmp_wav_file)
+        if not already_exist:
+            tmp_mp3_file = "generated_files/tmp_mp3_file.mp3"
+            with open(tmp_mp3_file, "w+b") as f:
+                f.write(file_uploaded.getbuffer())
+            input_file = convert_mp3_to_wav(tmp_mp3_file, tmp_wav_file)
+        else:
+            input_file = file_uploaded
     else:
-        temp_wav_file = "generated_files/tmp_wav_file.wav"
-        write_bytesio_to_file(temp_wav_file, input_file)
-        input_file = open(temp_wav_file)
+        if not already_exist:
+            temp_wav_file = "generated_files/tmp_wav_file.wav"
+            write_bytesio_to_file(temp_wav_file, input_file)
+            input_file = open(temp_wav_file)
+        else:
+            input_file = file_uploaded
 
     sound = AudioSegment.from_wav(input_file.name)
 
@@ -107,14 +123,6 @@ def get_text_from_audio(file_uploaded):
     
     return whole_text
 
-def convert_bytearray_to_wav_ndarray(input_bytearray: bytes, sampling_rate=16000):
-    bytes_wav = bytes()
-    byte_io = io.BytesIO(bytes_wav)
-    write(byte_io, sampling_rate, np.frombuffer(input_bytearray, dtype=np.int16))
-    output_wav = byte_io.read()
-    output, samplerate = sf.read(io.BytesIO(output_wav))
-    return output
-
 
 def record_audio():
     audio = audiorecorder("Click to record", "Click to stop recording")
@@ -122,52 +130,54 @@ def record_audio():
     if len(audio) > 0:       
         # To save audio to a file:
         # tmp_audio_file = tempfile.NamedTemporaryFile(delete = False, mode = "w+b", suffix = ".mp3")
-        tmp_audio_file = open("generated_files/temp_audio.mp3", "w+b")
+        file_path = "generated_files/temp_audio_record1.wav"
+        tmp_audio_file = open(file_path, mode = "w+b")
         tmp_audio_file.write(audio.tobytes())
 
-        user_text = get_text_from_audio(tmp_audio_file)
+        file_path_op = "generated_files/temp_audio_record.wav"
+        x,_ = librosa.load(file_path, sr=16000)
+        sf.write(file_path_op, x, 16000)
 
-        # tmp_audio_file.close()
-        # os.remove(tmp_audio_file.name)
+        final_audio_file = open(file_path_op)
+
+        # final_audio_file = wave.open(file_path_op)
+        user_text = get_text_from_audio(final_audio_file, already_exist= True)
+
         return user_text
     
     return None
 
+
+
+
 def get_prediction(user_text):
     # removing punctuation
     user_text = re.sub('[%s]' % re.escape(string.punctuation), '', user_text)
-    # tokenizing
-    stop_words = set(stopwords.words('english'))
-    tokens = nltk.word_tokenize(user_text)
-    # removing stop words
-    stopwords_removed = [token.lower() for token in tokens if token.lower() not in stop_words]
-    # taking root word
-    lemmatizer = WordNetLemmatizer() 
-    lemmatized_output = []
-    for word in stopwords_removed:
-        lemmatized_output.append(lemmatizer.lemmatize(word))
-    print("lemma: ", lemmatized_output)
-
-    result = sonar_model.ping(text = user_text)
-
-    res_class = result['top_class']
-
-    return res_class
 
 
+    client = discovery.build(
+    "commentanalyzer",
+    "v1alpha1",
+    developerKey=API_KEY,
+    discoveryServiceUrl="https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1",
+    static_discovery=False,
+    cache_discovery = False
+    )
 
+    attributes = ["TOXICITY","INSULT", 'SEVERE_TOXICITY','PROFANITY', 'THREAT', 'IDENTITY_ATTACK']
+    analyze_request = {
+    'comment': { 'text': user_text },
+    'requestedAttributes': {'TOXICITY': {}, 'INSULT':{}, 'SEVERE_TOXICITY':{}, 'IDENTITY_ATTACK':{}, 'THREAT':{}, 'PROFANITY':{}}
+    }
 
-    # instantiating count vectorizor
-    count = CountVectorizer(stop_words=stop_words)
-    X_train = pickle.load(open('pickle/X_train_2.pkl', 'rb'))
-    X_test = lemmatized_output
-    X_train_count = count.fit_transform(X_train)
-    X_test_count = count.transform(X_test)
+    response = client.comments().analyze(body=analyze_request).execute()
+    result = json.loads(json.dumps(response))
 
-    # loading in model
-    final_model = pickle.load(open('pickle/final_log_reg_count_model.pkl', 'rb'))
+    threshold = 0.5
+    for each in attributes:
+        score_value = result["attributeScores"][each]['summaryScore']['value']
+        print(each, score_value)
+        if score_value >= threshold:
+            return "Hatespeech"
 
-    # apply model to make predictions
-    prediction = final_model.predict(X_test_count[0])
-
-    return prediction
+    return "Not HateSpeech"
