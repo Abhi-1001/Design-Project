@@ -136,3 +136,5 @@ temp_audio_file.wav
 craft_mlt_25k.pth
 english_g2.pth
 audio_chunks/
+generated_files/
+landing.mp4

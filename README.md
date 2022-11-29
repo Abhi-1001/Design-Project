@@ -86,18 +86,15 @@ To further develop this project, here are some immediate next steps that anyone 
 ```bash
 .
 ├── models                             # contains model iterations
+├── pages                              # contains all webpages for different input formats
 ├── pickle                             # contains cleaned data
 │   └── final_model.pkl                # pickled final model
-├── preprocessing                      # contains all data preparation iterations and EDA notebooks
-│   ├── data_cleaning.ipynb            # raw data cleaning notebook
-│   ├── eda_notebook.ipynb             # exploratory data analysis notebook
-│   └── nlp_preprocessing.ipynb        # feature engineering notebook
+├── preprocessing                      # contains all data preparation iterations and EDA
 ├── src                                # source folder
 │   └── twitter.csv                    # raw dataset
+│   └── utils.py                       # contains utility functions
 ├── visualizations                     # contains visualizations and local images
-├── README.md                          # public-facing preview
-├── final_notebook.ipynb               # final version of EDA, feature engineering and modeling process
-├── presentation.pdf                   # slide deck
+├── README.md                          # public-facing preview process
 └── Home.py                            # interactive dashboard to host project
 ```
 

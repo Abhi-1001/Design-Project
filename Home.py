@@ -1,8 +1,35 @@
 # importing relevant python packages
 import streamlit as st
-st.set_page_config(initial_sidebar_state="auto", layout="wide")
-
+st.set_page_config(intial_sidebar_state="auto", layout="wide")
 from PIL import Image
+
+video_html = """
+		<style>
+            #myVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+            }
+
+            .content {
+            position: fixed;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #f1f1f1;
+            width: 100%;
+            padding: 20px;
+            }
+		</style>
+
+		<video autoplay muted loop id="myVideo">
+		  <source src="https://static.streamlit.io/examples/star.mp4">
+		  Your browser does not support HTML5 video.
+		</video>
+        """
+
+st.markdown(video_html, unsafe_allow_html=True)
 
 # creating page sections
 site_header = st.container()
@@ -47,3 +74,18 @@ with data_desc:
         """)
     with venn:
         st.image(Image.open('visualizations/word_venn.png'), width = 400)
+<<<<<<< HEAD
+
+with performance:
+    description, conf_matrix = st.columns(2)
+    with description:
+        st.header('Final Model Performance')
+        st.write("""
+        These scores are indicative of the two major roadblocks of the project:
+        - The massive class imbalance of the dataset
+        - The model's inability to identify what constitutes as hate speech
+        """)
+    with conf_matrix:
+        st.image(Image.open('visualizations/normalized_log_reg_countvec_matrix.png'), width = 400)
+=======
+>>>>>>> 433383dbfca3f86dbdcfb4361f36de5e19554285

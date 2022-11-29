@@ -8,8 +8,8 @@ import os
 # preprocessing
 from pydub import AudioSegment
 import speech_recognition as sr
-from src.utils import check_hate_speech
-from src.utils import write_bytesio_to_file
+from src.video_utils import check_hate_speech
+from src.video_utils import write_bytesio_to_file
 from pydub.silence import split_on_silence
 
 # creating page sections

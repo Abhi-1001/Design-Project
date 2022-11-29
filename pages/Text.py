@@ -4,7 +4,7 @@ st.set_page_config(initial_sidebar_state="auto")
 import pandas as pd
 
 # preprocessing
-from src.utils import check_hate_speech
+from src.video_utils import check_hate_speech
 
 # sentiment analysis
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
