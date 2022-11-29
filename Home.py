@@ -38,14 +38,19 @@ data_desc = st.container()
 performance = st.container()
 contact = st.container()
 
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 with site_header:
     st.title('Hate Speech Detection')
     st.write("""
-    This project aims to **automate content moderation** to identify hate speech using **machine learning binary classification algorithms.** 
-    
-    Baseline models included Random Forest, Naive Bayes, Logistic Regression and Support Vector Machine (SVM). The final model was a **Logistic Regression** model that used Count Vectorization for feature engineering. It produced an F1 of 0.3958 and Recall (TPR) of 0.624.  
-        
-    Check out the project repository [here](https://github.com/sidneykung/twitter_hate_speech_detection).
+    This project aims to **automate content moderation** to identify hate speech using **machine learning algorithms.**
     """)
 
 with business_context:
@@ -69,6 +74,7 @@ with data_desc:
         """)
     with venn:
         st.image(Image.open('visualizations/word_venn.png'), width = 400)
+<<<<<<< HEAD
 
 with performance:
     description, conf_matrix = st.columns(2)
@@ -81,3 +87,5 @@ with performance:
         """)
     with conf_matrix:
         st.image(Image.open('visualizations/normalized_log_reg_countvec_matrix.png'), width = 400)
+=======
+>>>>>>> 433383dbfca3f86dbdcfb4361f36de5e19554285
