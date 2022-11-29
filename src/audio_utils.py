@@ -24,6 +24,9 @@ import soundfile as sf
 from googleapiclient import discovery
 import json
 
+stopword = set(stopwords.words('english'))
+stemmer = nltk.SnowballStemmer("english")
+
 API_KEY = 'AIzaSyA4KlnJP1r-u7USC3ITpsOEgHWFOfP_6tg'
 
 

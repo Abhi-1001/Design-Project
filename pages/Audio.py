@@ -10,7 +10,7 @@ import nltk
 import string
 from io import StringIO
 import speech_recognition as sr
-import utils
+import src.audio_utils as utils
 
 # creating page sections
 audio_input = st.container()

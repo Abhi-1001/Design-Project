@@ -48,7 +48,7 @@ import easyocr as ocr
 from PIL import Image 
 # import cv2
 
-import utils
+import src.audio_utils as utils
 
 # from src.sound import sound
 # from src.settings import DURATION, get_recorded_audio_file

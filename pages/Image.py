@@ -3,7 +3,7 @@ import streamlit as st
 
 from pydub import AudioSegment
 import speech_recognition as sr
-import utils
+import src.audio_utils as utils
 from PIL import Image
 import easyocr as ocr
 import numpy as np

@@ -1,6 +1,35 @@
 # importing relevant python packages
 import streamlit as st
+st.set_page_config(intial_sidebar_state="auto", layout="wide")
 from PIL import Image
+
+video_html = """
+		<style>
+            #myVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%; 
+            min-height: 100%;
+            }
+
+            .content {
+            position: fixed;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #f1f1f1;
+            width: 100%;
+            padding: 20px;
+            }
+		</style>
+
+		<video autoplay muted loop id="myVideo">
+		  <source src="https://static.streamlit.io/examples/star.mp4">
+		  Your browser does not support HTML5 video.
+		</video>
+        """
+
+st.markdown(video_html, unsafe_allow_html=True)
 
 # creating page sections
 site_header = st.container()
@@ -52,22 +81,3 @@ with performance:
         """)
     with conf_matrix:
         st.image(Image.open('visualizations/normalized_log_reg_countvec_matrix.png'), width = 400)
-
-with contact:
-    st.markdown("---")
-    st.header('For More Information')
-    st.text('')
-    st.write("""
-
-    **Check out the project repository [here](https://github.com/sidneykung/twitter_hate_speech_detection).**
-
-    Contact Sidney Kung via [sidneyjkung@gmail.com](mailto:sidneyjkung@gmail.com).
-    """)
-
-    st.subheader("Let's Connect!")
-    st.write("""
-    
-    [LinkedIn](https://www.linkedin.com/in/sidneykung/) | [Github](https://github.com/sidneykung)  |  [Medium](https://medium.com/@sidneykung)  |  [Twitter](https://twitter.com/sidney_k98)
-
-
-    """)
