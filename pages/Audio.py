@@ -39,9 +39,10 @@ with audio_recorder:
     st.write("Audio Recorder")
     user_text = utils.record_audio()
     if user_text == "":
-            st.write("No text found")
+            st.write("No text found !!")
     else:
-        st.info(user_text)
+        if not user_text:
+            st.info(user_text)
 
 with model_results:
     st.header("Prediction:")
