@@ -10,7 +10,9 @@ from pydub import AudioSegment
 import speech_recognition as sr
 from src.video_utils import check_hate_speech
 from src.video_utils import write_bytesio_to_file
+import src.audio_utils as utils
 from pydub.silence import split_on_silence
+from src.load_css import local_css
 
 # creating page sections
 video_input = st.container()
@@ -29,8 +31,8 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 speech_to_text_convertor = sr.Recognizer()
 
 with video_input:
+    flag1 = True
     st.header('Is Your Video Considered Hate Speech?')
-    st.write("""*Please note that this prediction is based on how the model was trained, so it may not be an accurate representation.*""")
     # user input here
     uploaded_file = st.file_uploader("Choose a file", type=['mp4'])
     
@@ -79,21 +81,36 @@ with video_input:
                         text = f"{text}"
                         print(chunk_file, ":", text)
                         whole_text += text
-
+        
+        if whole_text == "":
+            st.write("No text found")
+        else:
             st.write("Converted Audio to Text")
             st.write(whole_text)
+    else:
+        whole_text = None
+        flag1 = False
             
-            # remove the media files
-            os.remove('/home/abhi1001/personal_projects/Design-Project/temp_audio_file.wav')
-            os.remove('/home/abhi1001/personal_projects/Design-Project/temp_video_file.mp4')
-            shutil.rmtree('/home/abhi1001/personal_projects/Design-Project/audio_chunks')
+            # # remove the media files
+            # os.remove('/home/abhi1001/personal_projects/Design-Project/temp_audio_file.wav')
+            # os.remove('/home/abhi1001/personal_projects/Design-Project/temp_video_file.mp4')
+            # shutil.rmtree('/home/abhi1001/personal_projects/Design-Project/audio_chunks')
 
 with model_results:
+    st.header("Prediction:")
+    local_css("templates/button_css.css")
     if st.button('Check for Hate Speech'):
-        with st.spinner("Please wait......."):
-            prediction = check_hate_speech(whole_text)
-            
-            prediction = 'Prediction: ' + prediction
+        if not flag1:
+            t = "<div><span class='highlight grey blink'>Please upload video<span class='bold'></span></div>"
+            # st.write("Please enter text")
+            st.markdown(t, unsafe_allow_html=True)
+        else:
+            with st.spinner("Please wait......."):
+                prediction = utils.get_prediction(whole_text)
+                if prediction == "Hatespeech":
+                    t = "<div><span class='highlight red'>" + prediction + "<span class='bold'></span></div>"
+                else:
+                    t = "<div><span class='highlight green'>" + prediction + "<span class='bold'></span></div>"
+                st.markdown(t, unsafe_allow_html=True)
+                st.text('')
 
-            st.subheader(prediction)
-            st.text('')
