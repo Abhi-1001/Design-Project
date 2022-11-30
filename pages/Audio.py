@@ -43,6 +43,7 @@ with audio_recorder:
     else:
         if not user_text:
             st.info(user_text)
+            flag1  = False
 
 with model_results:
     st.header("Prediction:")
