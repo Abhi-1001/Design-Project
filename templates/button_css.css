@@ -1,0 +1,35 @@
+.highlight {
+    border-radius: 0.4rem;
+    color: white;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .bold {
+    padding-left: 1rem;
+    font-weight: 700;
+  }
+  .green {
+    background-color: rgb(24, 165, 11);
+  }
+  .red {
+    background-color: rgb(254, 0, 0);
+  }
+  .grey {
+    background-color: rgb(145, 134, 188);
+  }
+
+  .blink {
+    animation: 1.5s linear infinite condemned_blink_effect;
+  }
+  
+  @keyframes condemned_blink_effect {
+    0% {
+      visibility: hidden;
+    }
+    50% {
+      visibility: hidden;
+    }
+    100% {
+      visibility: visible;
+    }
+  }

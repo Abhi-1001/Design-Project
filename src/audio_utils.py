@@ -176,7 +176,7 @@ def get_prediction(user_text):
     response = client.comments().analyze(body=analyze_request).execute()
     result = json.loads(json.dumps(response))
 
-    threshold = 0.5
+    threshold = 0.6
     for each in attributes:
         score_value = result["attributeScores"][each]['summaryScore']['value']
         print(each, score_value)
