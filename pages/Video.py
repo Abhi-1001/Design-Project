@@ -26,6 +26,7 @@ footer {visibility: hidden;}
 
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+local_css("templates/button_css.css")
 
 # initialize the recognizer
 speech_to_text_convertor = sr.Recognizer()
@@ -34,6 +35,9 @@ with video_input:
     flag1 = True
     st.header('Is Your Video Considered Hate Speech?')
     # user input here
+    t = "<div class='demo-5 one-edge-shadow'> Upload Video file</div"
+    st.markdown(t, unsafe_allow_html=True)
+
     uploaded_file = st.file_uploader("Choose a file", type=['mp4'])
     
     if uploaded_file is not None:
@@ -97,8 +101,12 @@ with video_input:
             # shutil.rmtree('/home/abhi1001/personal_projects/Design-Project/audio_chunks')
 
 with model_results:
-    st.header("Prediction:")
-    local_css("templates/button_css.css")
+    for i in range(7):
+        st.write("")
+    t = "<div class='demo-5-pred'>Prediction</div"
+    st.markdown(t, unsafe_allow_html=True)
+    for i in range(2):
+        st.write("")
     if st.button('Check for Hate Speech'):
         if not flag1:
             t = "<div><span class='highlight grey blink'>Please upload video<span class='bold'></span></div>"

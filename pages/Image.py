@@ -21,10 +21,15 @@ def load_model():
 
 reader = load_model() #load model
 
+local_css("templates/button_css.css")
+
 with img_input:
+    # local_css()
     flag1 = True
-    st.write('Upload Image file')
-    user_img_file = st.file_uploader("upload img file", type =['png','jpg','jpeg'])
+    st.header('Is Your Image text Considered Hate Speech?')
+    t = "<div class='demo-5 one-edge-shadow'> Upload Image file</div"
+    st.markdown(t, unsafe_allow_html=True)
+    user_img_file = st.file_uploader("", type =['png','jpg','jpeg'])
     if user_img_file:
         input_image = Image.open(user_img_file) #read image
         st.image(input_image) #display image
@@ -51,7 +56,12 @@ with img_input:
 
 with img_capture:
     flag1 = True
-    picture = st.camera_input("Take a picture")
+    for i in range(8):
+        st.write("")
+
+    t = "<div class='demo-5 one-edge-shadow'> Take a picture</div"
+    st.markdown(t, unsafe_allow_html=True)
+    picture = st.camera_input("")
     if picture:
         st.image(picture)
         input_image = Image.open(picture) #read image
@@ -77,11 +87,19 @@ with model_results:
     #     result = utils.get_prediction(user_text)
     #     st.write("Prediction:")
     #     st.write(result)
-    st.header("Prediction:")
-    local_css("templates/button_css.css")
+    for i in range(7):
+        st.write("")
+
+    t = "<div class='demo-5-pred'>Prediction</div"
+    st.markdown(t, unsafe_allow_html=True)
+    
+    for i in range(2):
+        st.write("")
+
+    # st.header("Prediction:")
     if st.button('Check for Hate Speech'):
         if not flag1:
-            t = "<div><span class='highlight grey blink'>Please upload or capture image<span class='bold'></span></div>"
+            t = "<div><span class='highlight grey blink'> Please upload or capture image<span class='bold'></span></div>"
             # st.write("Please enter text")
             st.markdown(t, unsafe_allow_html=True)
         else:

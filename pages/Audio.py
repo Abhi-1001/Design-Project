@@ -19,10 +19,14 @@ audio_recorder = st.container()
 model_results = st.container()
 # sentiment_analysis = st.container()
 
+local_css("templates/button_css.css")
+
 with audio_input:
+    st.header('Is Your Audio Considered Hate Speech?')
     flag1 = True
-    st.write("Audio File uploader")
-    user_audio_file = st.file_uploader("upload audio file", type = [".wav", ".mp3"])
+    t = "<div class='demo-5 one-edge-shadow'> Upload Audio file</div"
+    st.markdown(t, unsafe_allow_html=True)
+    user_audio_file = st.file_uploader("", type = [".wav", ".mp3"])
     if user_audio_file:
         user_text = utils.get_text_from_audio(user_audio_file)   
         if user_text == "":
@@ -35,19 +39,34 @@ with audio_input:
         flag1 = False
 
 with audio_recorder:
+    for i in range(8):
+        st.write("")
+
     flag1=True
-    st.write("Audio Recorder")
-    user_text = utils.record_audio()
+    t = "<div class='demo-5 one-edge-shadow'> Audio recorder</div"
+    st.markdown(t, unsafe_allow_html=True)
+    user_text, ret = utils.record_audio()
+    print("check2:", ret)
+    print("check: ", user_text)
     if user_text == "":
             st.write("No text found !!")
     else:
-        if not user_text:
-            st.info(user_text)
+        if user_text:
+            if ret:
+                st.info(user_text)           
+        else:
             flag1  = False
 
 with model_results:
-    st.header("Prediction:")
-    local_css("templates/button_css.css")
+    for i in range(7):
+        st.write("")
+
+    t = "<div class='demo-5-pred'>Prediction</div"
+    st.markdown(t, unsafe_allow_html=True)
+    
+    for i in range(2):
+        st.write("")
+        
     if st.button('Check for Hate Speech'):
         if not flag1:
             t = "<div><span class='highlight grey blink'>Please upload or record audio<span class='bold'></span></div>"
